@@ -1,0 +1,308 @@
+DAY4
+
+TASK1: Cyber Security Fundamentals
+
+1. Not to do: Enroll BS cyberSec
+
+to Do: Do it!.
+
+TASK2: How to exploit layer 5: ipc$
+
+nmap -v 10.42.1.10
+
+139/445 = windows hidden shares:
+net share (CMD)
+
+CMD
+net	use	\\10.42.1.10\ipc$
+
+net use p: \\10.42.1.10\c$
+
+TAKS3:
+Protect your network using basic firewall:
+Create a policy to call/ping only your column:
+@EDGE:
+Use standard access-list[1-99] to block IP address:
+
+conf t
+no access-list 1
+access-list 1 permit 10.11.0.0 0.0.255.255
+access-list 1 permit 10.21.0.0 0.0.255.255
+access-list 1 permit 10.31.0.0 0.0.255.255
+access-list 1 permit 10.51.0.0 0.0.255.255
+access-list 1 permit 10.61.0.0 0.0.255.255
+Int Gi 0/0/1
+ ip access-group 1 in
+ do sh ip access-list 1
+
+NEW GROUPINGS:
+
+conf t
+no access-list 2
+access-list 2 permit 10.31.0.0 0.0.255.255
+access-list 2 permit 10.32.0.0 0.0.255.255
+access-list 2 permit 10.42.0.0 0.0.255.255
+
+Int Gi 0/0/1
+ ip access-group 2 in
+ do sh ip access-list 2
+
+TASK5.2: SoulMates
+
+conf t
+no access-list 3
+access-list 3 permit 10.42.0.0 0.0.255.255
+
+Int Gi 0/0/1
+ ip access-group 3 in
+ do sh ip access-list 3
+
+
+TASK5.3: SoulMatesX
+
+conf t
+no access-list 4
+access-list 4 permit 10.32.0.0 0.0.255.255
+
+Int Gi 0/0/1
+ ip access-group 4 in
+ do sh ip access-list 4
+
+bukas Firewall:
+conf t
+Int Gi 0/0/1
+ NO ip access-group 1 in
+
+TASK4: edit hosts file for crackers:
+
+C:\Windows\System32\Drivers\etc\
+
+TASK5: Implementing basic Cisco Security using extended access-list:
+ex.1. you are the Network Security Engineer and configure a firewall policy with these conditions:
+
+cm is web server only: 80 and 443
+cm2 is an ssh and dns server only: ping, 22 and 53
+
+magic FORMULA: 
+	"protocol 		hacker 			victim 		port:" 
+	tcp,udp,icmp,IP		any(0.0.0.0/32)		cm,cm2		
+
+@CUCM: Use Extended ACL: 100.199
+cm is web server only: 80 and 443
+cm2 is an ssh and dns server only: ping, 22 and 53
+
+config t
+no access-list 100
+access-list 100 permit tcp Any host cm eq 80
+access-list 100 permit tcp Any host cm eq 443
+access-list 100 permit icmp Any host cm2
+access-list 100 permit tcp Any host cm2 eq 422
+access-list 100 permit tcp Any host cm2 eq 53
+int fa 0/0
+ ip access-group 100 in
+ do sh ip access-list 100
+end
+
+Unlock the Firewall:
+config t
+int fa 0/0
+ NO ip access-group 100 in
+end
+
+
+Ex.2:
+
+You are the Network Security Engineer and configure a firewall policy with these conditions:
+
+cm is ssh, sscp, sip server:
+cm2 is an http,https,dns server:
+
+conf t
+no access-list 101
+access-list 101 permit tcp Any host cm eq 22
+access-list 101 permit tcp Any host cm eq 2000
+access-list 101 permit tcp Any host cm eq 5060
+access-list 101 permit tcp Any host cm2 eq 80
+access-list 101 permit tcp Any host cm2 eq 443
+access-list 101 permit tcp Any host cm2 eq 53
+int fa 0/0
+ ip access-group 101 in
+ do sh ip access-list 101
+end
+
+
+Ex.3:
+
+You are the Network Security Engineer and configure a firewall policy with these conditions: use 102
+
+cm is telnet, ssh, dns server:
+cm2 is an ping,sccp,https server:
+
+conf t
+no access-list 102
+access-list 102 permit tcp Any host cm eq 23
+access-list 102 permit tcp Any host cm eq 22
+access-list 102 permit tcp Any host cm eq 53
+access-list 102 permit icmp Any host cm2 
+access-list 102 permit tcp Any host cm2 eq 2000
+access-list 102 permit tcp Any host cm2 eq 443
+int fa 0/0
+ ip access-group 102 in
+ do sh ip access-list 102
+end
+
+
+TASK6:Types of network firewall:
+
+saiyan: packetfilter firewall: (CCNA)
+	cisco extended acl
+	linux ip tables
+	 "buti kesa wala"
+	Block: SIP,DIP,SPORT,DPORT
+	
+
+SuperSaiyan: application/stateful firewall:
+dBEST:	NextGenFirewall + A.I
+
+TASK7: Implement Packet filter firewall.
+
+
+Assignment: Create your own home CyberSecLab:
+
+LINUX BLDG2 and BLDG3 REDO!!!
+UTM
+
+
+
+Need to run: Firewall, VPN, NAT, ssh, DHCP, IntrusionPreventionSystem, Detection" = UTM: unifiedThreatManagment.
+
+ingredients: kali.7z,vmware,csr1000v
+1. install csr1000v @ home:
+2. nat, vmnet2, vmnet3.
+3. type:
+enable
+conf t
+ no logging console
+ no ip domain lookup
+ int gi 1
+  no shut
+  ip add 192.168.108.8 255.255.255.0
+ line vty 0 14
+  transport input all
+  exec-timeout 0 0
+
+
+part 2: configure gi 2 and gi3:
+conf t
+int gi 2
+ ip add 192.168.102.8 255.255.255.0
+ no shut
+int gi 3
+ ip add 192.168.103.8 255.255.255.0
+ no shut
+
+TASK7: network engineer ultimate skills:
+skill1: AAA: Authorization, Accounting, Authentication:
+config t
+username annecurtis privilege 15 secret password
+username kyle privilege 15 secret password
+line vty 0 14
+ transport input telnet ssh
+
+skill2: SecureShellVersion2: sshv2
+ssh is a very secure Protocol for Admins:
+
+conf t
+ ip domain lookup
+ ip domain name rivanit.com
+ crypto key generate rsa
+ ip ssh version 2
+ line vty 0 14
+   transport input ssh telnet
+
+
+skill3: NAT = Network Address Translation\ Pa-HotSpot
+give internet to LinuxServers in bldg1 and bldg2.
+give IP address to linux2 and linux3:
+
+@linux2:
+sudo ifconfig eth0 192.168.102.50 netmask 255.255.255.0 up
+sudo route add default gw 192.168.102.8
+
+@linux3:
+sudo ifconfig eth0 192.168.103.50 netmask 255.255.255.0 up
+sudo route add default gw 192.168.103.8
+
+
+UseCisco to Give Internet to Linux2 and Linux3:
+@UTM:
+conf t
+interface Gi 1
+ ip nat OUTSIDE
+interface gi 2
+ ip nat INSIDE
+interface gi 3
+ ip nat INSIDE
+access-list 8 permit 192.168.102.0 0.0.0.255
+access-list 8 permit 192.168.103.0 0.0.0.255
+!!!static NAT ip address
+ip nat inside source static 192.168.102.50 192.168.108.69
+ip nat inside source static 192.168.103.50 192.168.108.77
+ip nat inside source list 8 interface gi 1 overload
+do sh ip nat translation
+
+Give Internet to UTM:
+conf t
+ip route 0.0.0.0 0.0.0.0 192.168.108.2
+
+
+Skillno.4: Network Time Protocol
+configure UTM to sync with google USA: time.google.com: 216.239.35.4
+
+conf t
+ ip domain lookup
+ ip name-server 8.8.8.8 1.1.1.1
+ ntp server 216.239.35.4
+ do sh ntp association
+ do sh clock
+
+
+Skill5: LEARN TO BLOCK ALL THE TOP PORNSITES: and be HOLY!
+Trivia: All the top 100 Porn sites, are owned by 5 people.
+
+pornhub: 66.254.114.41
+redtube: 66.254.114.238
+youporn: 66.254.114.79
+bangbros: 66.254.114.234
+mofos: 66.254.114.234
+
+66.254.0.0
+
+
+iyottube: 68.235.0.0
+pinayflix: 104.21.0.0
+xhamster: 88.208.60.0
+
+Block sites:
+conf t
+no access-list 69
+access-list 69 deny 66.254.0.0 0.0.255.255
+access-list 69 deny 68.235.0.0 0.0.255.255
+access-list 69 deny 104.21.0.0 0.0.255.255
+access-list 69 deny 88.208.60.0 0.0.255.255
+access-list 69 permit any
+int gi 1
+ ip access-group 69 in
+end
+
+
+
+Recover-config
+
+@COREbaba41:
+sh ip dhcp binding
+
+
+
+
+
